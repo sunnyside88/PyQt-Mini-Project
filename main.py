@@ -1,4 +1,5 @@
 import PyQt5.QtWidgets as qtw
+import json
 from  page_counter import PageCounter
 
 
@@ -13,6 +14,7 @@ class MainWindow(qtw.QWidget):
 			"button_select": qtw.QPushButton("Select folder",clicked = self.open_file),
 			"button_compute": qtw.QPushButton("Compute",clicked=self.compute),
 			"text_box": qtw.QLineEdit(self),
+			'result_box':qtw.QMessageBox(self),
 		}
 		for (name,com) in self.components.items():
 			self.layout().addWidget(com)
@@ -26,9 +28,11 @@ class MainWindow(qtw.QWidget):
 	
 	def compute(self):
 		# print('Computing from %s' % self.directory)
-		PageCounter.count_pdf()
-
-
+		filesDict = PageCounter.count_pdf(self.directory)
+		if len(filesDict)>0:
+			self.components['result_box'].about(self,"Result",json.dumps(filesDict))
+		else:
+			self.components['result_box'].about(self,"Result","No PDF files found")
 app = qtw.QApplication([])
 mw = MainWindow()
 
